@@ -20,6 +20,12 @@ const Info = () => {
  const redditLogo = 'https://img.favpng.com/1/2/24/reddit-logo-youtube-png-favpng-Rukc5hsDFfci1sNk1LkFBccvW.jpg';
  const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false';
 
+ const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2
+})
+
 useEffect(()=> {
  axios.get(url).then((response) => {
      setCurrency(response.data);
@@ -43,21 +49,23 @@ const isMatch = (name) => {
   console.log(redditExternal);
 }
 
-//const objectHere = {val1: ''};
+const objectHere = {val1: ''};
 
-//const [modalObj, setModalObj] = useState(objectHere);
-
+const [modalObj, setModalObj] = useState(objectHere);
 
 const clicked = (name, market_rank, image, market_cap) => {
     isMatch(name);
     fetchReddit(); 
     
-    setModal([name, market_rank, image, market_cap, redditExternal]);
-    //setModalObj({objectHere[val1]});
+    setModal([name, market_rank, image, market_cap.toLocaleString("en-US"), redditExternal]);
+    const newVal = {value: "hello"};
+    //newVal[0] = name;
+    console.log('value ' + newVal);
+    setModalObj({...newVal});
     setModalOpen(true);
     urlReddit = '';
     redditExternal = '';
-    //console.log('modalObj ' + modalObj)
+    console.log('modalObj ' + modalObj);
 }
 
     const fetchReddit = async () => {
@@ -66,7 +74,7 @@ const clicked = (name, market_rank, image, market_cap) => {
             const myData = await response.json();
             console.log(myData);
             console.log(myData.data.subscribers);
-            setMyLatestState(myData.data.subscribers);      
+            setMyLatestState(myData.data.subscribers.toLocaleString("en-US"));      
         } catch (error) {
             console.log('try catch ' + error);
             setMyLatestState("No data");
@@ -105,7 +113,7 @@ const loadMore = () => {
                       <p className='crypto-row'>
                         <img className='crypto-img' src={val.image} alt={val.name}/>
                       </p>
-                      <p className='crypto-row'>${`${val.market_cap}`}</p>
+                      <p className='crypto-row'>{formatter.format(val.market_cap)}</p>
                         </div>                                             
                           {modalOpen && (
                             <div className='modal-overlay'>
