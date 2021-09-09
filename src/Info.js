@@ -89,6 +89,8 @@ const handleChange = (e) => {
 
 const filteredCoins = currency.filter(coin => coin.name.toLowerCase().includes(searchInput.toLowerCase()));
 
+console.log(filteredCoins.length)
+
 const loadMore = () => {
   setAmount(amount + 10)
 }
@@ -138,7 +140,7 @@ const loadMore = () => {
                   </>                 
                 )               
             })}           
-            {amount < 100 ? <button onClick={() => loadMore()}>Load More</button> : <p>You've reached the end</p>}
+            {amount >= 100 || filteredCoins.length < amount ? <p>You've reached the end</p> : <button onClick={() => loadMore()}>Load More</button>}
         </div> 
     )
 }
