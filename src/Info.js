@@ -85,11 +85,13 @@ const clicked = (name, market_rank, image, market_cap) => {
 const handleChange = (e) => {
   e.preventDefault();
   setSearchInput(e.target.value);
+  setAmount(10);
 };
 
 const filteredCoins = currency.filter(coin => coin.name.toLowerCase().includes(searchInput.toLowerCase()));
 
-console.log(filteredCoins.length)
+
+console.log("filtered " + filteredCoins.length);
 
 const loadMore = () => {
   setAmount(amount + 10)
