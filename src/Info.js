@@ -14,6 +14,8 @@ const Info = () => {
  const [searchInput, setSearchInput] = useState('');
  const [amount, setAmount] = useState(10);
 
+ const columnHeader = ['Rank', 'Logo', 'Name', 'Symbol', 'Price', 'Market Cap'];
+
  let urlReddit;
  let redditExternal = '';
 
@@ -53,11 +55,11 @@ const objectHere = {val1: ''};
 
 const [modalObj, setModalObj] = useState(objectHere);
 
-const clicked = (name, market_rank, image, market_cap) => {
+const clicked = (name, market_rank, image, symbol, current_price, market_cap) => {
     isMatch(name);
     fetchReddit(); 
     
-    setModal([name, market_rank, image, market_cap.toLocaleString("en-US"), redditExternal]);
+    setModal([name, market_rank, image, symbol, formatter.format(current_price), market_cap.toLocaleString("en-US"), redditExternal]);
     const newVal = {value: "hello"};
     //newVal[0] = name;
     console.log('value ' + newVal);
@@ -66,7 +68,9 @@ const clicked = (name, market_rank, image, market_cap) => {
     urlReddit = '';
     redditExternal = '';
     console.log('modalObj ' + modalObj);
+    console.log(modal);
 }
+
 
     const fetchReddit = async () => {
         try {
@@ -108,15 +112,20 @@ const loadMore = () => {
                   <div className='crypto-container clickable' onClick={ () => clicked(
                     val.name, 
                     val.market_cap_rank, 
-                    val.image, 
+                    val.image,
+                    val.symbol,
+                    val.current_price, 
                     val.market_cap
                     )
                     }>
+                      {columnHeader.forEach((val) => val)}
                       <p className='crypto-row'>{val.market_cap_rank}</p>
-                      <p className='crypto-row'>{val.name}</p>
                       <p className='crypto-row'>
                         <img className='crypto-img' src={val.image} alt={val.name}/>
                       </p>
+                      <p className='crypto-row'>{val.name}</p>
+                      <p className='crypto-row'>{val.symbol}</p>
+                      <p className='crypto-row'>{formatter.format(val.current_price)}</p>
                       <p className='crypto-row'>{formatter.format(val.market_cap)}</p>
                         </div>                                             
                           {modalOpen && (
@@ -128,8 +137,10 @@ const loadMore = () => {
                                   <img className='crypto-img' src={modal[2]} alt={modal[0]}/>
                                 </p>
                                 <p>{modal[3]}</p>
+                                <p>{modal[4]}</p>
+                                <p>{modal[5]}</p>
                                 <p>{myLatestState}</p>
-                                <a href={modal[4]} target='_blank'>
+                                <a href={modal[6]} target='_blank'>
                                     <img className='crypto-img' src={redditLogo} alt='reddit'/>
                                 </a>
 
