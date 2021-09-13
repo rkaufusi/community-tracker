@@ -1,9 +1,7 @@
 import {React, useState, useEffect} from 'react'
-import Modal from './Modal';
 import axios from 'axios';
 import './info.css'
 import data from './data.js';
-//import isMatch from './isMatch.js';
 
 const Info = () => {
  const [currency, setCurrency] = useState([]);
@@ -13,8 +11,6 @@ const Info = () => {
  const [myLatestState, setMyLatestState] = useState([]);
  const [searchInput, setSearchInput] = useState('');
  const [amount, setAmount] = useState(10);
-
- const columnHeader = ['Rank', 'Logo', 'Name', 'Symbol', 'Price', 'Market Cap'];
 
  let urlReddit;
  let redditExternal = '';
@@ -39,7 +35,6 @@ const isMatch = (name) => {
   nameData.map((val) => {
       if(name === val.name){
         urlReddit = `https://www.reddit.com/r/${val.searchTerm}/about.json`;
-        console.log("SEARCH TERM " + val.searchTerm);
         temp++;
       }
   })
@@ -47,28 +42,17 @@ const isMatch = (name) => {
     urlReddit = `https://www.reddit.com/r/${name}/about.json`;
   }
   redditExternal = urlReddit.slice(0, -11);
-  console.log(name + " " + temp);
-  console.log(redditExternal);
 }
-
-const objectHere = {val1: ''};
-
-const [modalObj, setModalObj] = useState(objectHere);
 
 const clicked = (name, market_rank, image, symbol, current_price, market_cap) => {
     isMatch(name);
     fetchReddit(); 
     
     setModal([name, market_rank, image, symbol, formatter.format(current_price), market_cap.toLocaleString("en-US"), redditExternal]);
-    const newVal = {value: "hello"};
-    //newVal[0] = name;
-    console.log('value ' + newVal);
-    setModalObj({...newVal});
+
     setModalOpen(true);
     urlReddit = '';
     redditExternal = '';
-    console.log('modalObj ' + modalObj);
-    console.log(modal);
 }
 
     const fetchReddit = async () => {
@@ -82,7 +66,6 @@ const clicked = (name, market_rank, image, symbol, current_price, market_cap) =>
             console.log('try catch ' + error);
             setMyLatestState("No data");
         }
-        console.log('mylatestState' + myLatestState);
 }
 
 const handleChange = (e) => {
@@ -93,23 +76,19 @@ const handleChange = (e) => {
 
 const filteredCoins = currency.filter(coin => coin.name.toLowerCase().includes(searchInput.toLowerCase()));
 
-
-console.log("filtered " + filteredCoins.length);
-
 const loadMore = () => {
   setAmount(amount + 10);
 }
     return (
-        <div>
-          <h3>Crypto Community Tracker</h3>
-          <input type='text' placeholder='search here' onChange={handleChange} value={searchInput} placeholder='Search'/>
-          <div className='crypto-row'>
+        <div className='background'>
+          <div className='heading'>
+            <h1>Crypto Community Tracker</h1>
+            <input type='text' placeholder='search here' onChange={handleChange} value={searchInput} placeholder='Search'/>
           </div>
           
             {filteredCoins.slice(0, amount).map((val) => {
               return ( 
                 <>
-                
                   <div className='crypto-container clickable' onClick={ () => clicked(
                     val.name, 
                     val.market_cap_rank, 
@@ -120,25 +99,24 @@ const loadMore = () => {
                     )
                     }>
 
-                      <p className='crypto-row'>{val.market_cap_rank}</p>
+                      <p className='crypto-row pad'>{val.market_cap_rank}</p>
                       <p className='crypto-row'>
                         <img className='crypto-img' src={val.image} alt={val.name}/>
                       </p>
                       <p className='crypto-row'>{val.name}</p>
-                      <p className='crypto-row'>{val.symbol}</p>
+                      <p className='crypto-row crypto-symbol'>{val.symbol}</p>
                       <p className='crypto-row'>{'Price: ' + formatter.format(val.current_price)}</p>
                       <p className='crypto-row'>{'Mkt Cap: ' + formatter.format(val.market_cap)}</p>
-                        </div>                                             
+                        </div>                                          
                           {modalOpen && (
                             <div className='modal-overlay'>
-                            
                               <div className='modal-container'>
                                 <p className='modal-row'>{modal[1]}</p>
                                 <p className='modal-row'>{modal[0]}</p>
                                 <p>
                                   <img className='crypto-img' src={modal[2]} alt={modal[0]}/>
                                 </p>
-                                <p>{modal[3]}</p>
+                                <p className='crypto-symbol'>{modal[3]}</p>
                                 <p>Price <br/> {modal[4]}</p>
                                 <p>Market Cap <br/> {modal[5]}</p>
                                 <p>Reddit subs <br/> {myLatestState}</p>
@@ -147,18 +125,19 @@ const loadMore = () => {
                                     <img className='crypto-img' src={redditLogo} alt='reddit'/>
                                   </a>
                                 </p>
-
-
-                                <button className='close-modal-btn' onClick={() => setModalOpen(false)}>
-                                  X
-                                </button>
+                                  <button className='close-modal-btn' onClick={() => setModalOpen(false)}>
+                                    X
+                                  </button>
                               </div>
                             </div>
                           )}                         
                   </>                 
                 )               
-            })}           
-            {amount >= 100 || filteredCoins.length < amount ? <p>You've reached the end</p> : <button onClick={() => loadMore()}>Load More</button>}
+            })}  
+            <div className='heading'>
+            {amount >= 100 || filteredCoins.length < amount ? <p>You've reached the end</p> : <button  onClick={() => loadMore()}>Load More</button>}
+            </div>         
+            
         </div> 
     )
 }
